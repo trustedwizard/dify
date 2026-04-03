@@ -68,6 +68,7 @@ from core.app.entities.queue_entities import (
 )
 from core.rag.entities.citation_metadata import RetrievalSourceMetadata
 from core.workflow.node_factory import DifyNodeFactory, get_default_root_node_id, resolve_workflow_node_class
+from core.workflow.runtime_state import create_graph_runtime_state
 from core.workflow.system_variables import (
     build_bootstrap_variables,
     default_system_variables,
@@ -191,7 +192,11 @@ class WorkflowBasedAppRunner:
                 environment_variables=workflow.environment_variables,
             ),
         )
-        graph_runtime_state = GraphRuntimeState(variable_pool=variable_pool, start_at=time.time())
+        graph_runtime_state = create_graph_runtime_state(
+            variable_pool=variable_pool,
+            start_at=time.time(),
+            workflow_id=workflow.id,
+        )
 
         # Determine which type of single node execution and get graph/variable_pool
         if single_iteration_run:
